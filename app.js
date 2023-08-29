@@ -27,7 +27,7 @@ db.once("open", () => {
 });
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log(`server is running on port ${process.env.PORT}`);
+  console.log(`server is running on port ${process.env.PORT}`, 3000);
 });
 
 var storage = multer.diskStorage({
@@ -41,13 +41,34 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage });
 
+app.get("/", (req, res) => {
+  res.send("<h1>Robotix</h1>");
+});
+app.get("/data", (req, res) => {
+  Model.find({}).then((data, err) => {
+    if (err) {
+      console.log(err);
+    }
+    res.send(data);
+  });
+});
+
 app.post("/register", upload.single("image"), async (req, res) => {
   var obj = {
-    name: req.body.name,
-    roll: req.body.roll,
-    semester: req.body.semester,
-    phoneNo: req.body.phoneNo,
-    email: req.body.email,
+    member1: {
+      name: req.body.m1Name,
+      roll: req.body.m1Roll,
+      phoneNo: req.body.m1PhoneNo,
+      branch: req.body.m1Branch,
+    },
+    member2: {
+      name: req.body.m2Name,
+      branch: req.body.m2Branch,
+    },
+    member3: {
+      name: req.body.m3Name,
+      branch: req.body.m3Branch,
+    },
     img: {
       data: fs.readFileSync(
         path.join(__dirname + "/uploads/" + req.file.filename)
